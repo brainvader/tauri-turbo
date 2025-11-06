@@ -1,135 +1,124 @@
-# Turborepo starter
+tauri-turbo
 
-This Turborepo starter is maintained by the Turborepo core team.
+主にTauri 2.0デスクトップアプリケーションのために構築された実験的なTurborepoです。共有ワークスペースは、将来のReact Nativeモバイルクライアントと軽量なReact + Viteウェブプレビューをサポートし、UIとドメインロジックがプラットフォーム間で整合性を保つようにします。
 
-## Using this example
+このリポジトリは、デザイン・トークン、ビジネス・ルール、開発者ツールにおけるシングル・ソース戦略を模索しつつ、デスクトップ・ビルドを最優先の成果物として維持します。
 
-Run the following command:
+Repository layout
 
-```sh
-npx create-turbo@latest
-```
+Path Role Status
+apps/web ブラウザでデスクトップのUXフローをプレビューするためのReact + Viteシェル Active
+apps/docs Viteベースのスタックに移行予定のドキュメント・プレイグラウンド Under migration
+packages/ui クロスプラットフォームのReactコンポーネントライブラリ（デスクトップ、ウェブ、モバイルのアダプターを含む） In progress
+packages/eslint-config マルチプラットフォーム・モノレポに合わせた集中型Linterルール Active
+packages/typescript-config 一貫したコンパイラ・フラグを強制するための共有TSコンフィグ Active
+(planned) apps/desktop 共有パッケージを利用するTauri 2.0シェル (Rust + WebView UI) Not yet scaffolded
+(planned) apps/mobile 共有ロジックとUIトークンを活用するReact Nativeアプリ Not yet scaffolded
 
-## What's inside?
+Prerequisites
 
-This Turborepo includes the following packages/apps:
+    Node.js 18+ と npm 10+（将来的な.nvmrcに準拠）
 
-### Apps and Packages
+    cargoを含むRustツールチェーンと、OS固有のTauri 2の前提条件
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+        Windowsの場合: Visual Studio Build Tools (Desktopワークロード)、WebView2ランタイム、および x86_64-pc-windows-msvc ターゲット
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+    (Future) React Nativeツールチェーン: モバイルワークスペースが追加された際には、Xcode、Android Studio、Expo CLIが必要
 
-### Utilities
+Getting started
 
-This Turborepo has some additional tools already setup for you:
+Bash
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+npm install
 
-### Build
+すべてのワークスペース・スクリプトはTurboを通じて調整されます：
 
-To build all apps and packages, run the following command:
+    npm run dev – すべてのアプリの開発サーバーを実行（<workspace>で絞り込むには turbo run dev --filter=<workspace> を使用）
 
-```
-cd my-turborepo
+    npm run build – モノレポ全体で本番ビルドを作成
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+    npm run lint – 共有設定を使用してLinterを実行
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+    npm run check-types – すべてのパッケージ/アプリの型チェックを実行
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+    npm run format – Prettierを使用して.ts、.tsx、.mdファイルをフォーマット
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+Working on web-facing surfaces
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+Bash
 
-### Develop
+# React + Vite ウェブシェル
 
-To develop all apps and packages, run the following command:
+turbo run dev --filter=web
 
-```
-cd my-turborepo
+# ドキュメント・プレイグラウンド (VitePress/MDXへ移行中)
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+turbo run dev --filter=docs
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+Tauri 2 desktop workflow (planned)
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+デスクトップ・シェルはapps/desktopに配置され、Tauri経由で公開されるRustコマンドとともにpackages/uiを利用します。
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+    npm install – Rustビルドの前にバインディングが生成されることを保証
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+    turbo run dev --filter=desktop – デスクトップ開発ウィンドウを起動
 
-### Remote Caching
+    turbo run build --filter=desktop – 配布可能なバイナリを生成
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+    Tauri 2は、ReactフロントエンドをセキュアなWebViewにバンドルし、Rustコマンドがネイティブ統合を処理します。
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+React Native workflow (planned)
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+モバイル・ワークスペースは、共有されたTypeScriptモデルとUIトークンを再利用します。
 
-```
-cd my-turborepo
+    ネイティブ設定が変更されたときには npx expo prebuild を実行
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+    turbo run dev --filter=mobile でExpo開発サーバーを起動
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+    turbo run build --filter=mobile でリリース・ビルドを作成（EASまたはネイティブ・ツールチェーンを使用）
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+    Expoは、ビジネスロジックの重複なしに、React Nativeサーフェスを共有TypeScriptレイヤーと整合させます。
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+Shared code strategy
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+    UI kit (packages/ui): @repo/ui/desktop、@repo/ui/web、@repo/ui/mobile のようなアダプターを持つ、プラットフォームに依存しないコンポーネント。
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+    Configs: 集中管理されたESLintとTypeScriptの設定が、Rust、Vite、React Nativeのターゲット全体で一貫したツール設定を強制します。
 
-## Useful Links
+    Turbo tasks: ビルド、Linter、テストのパイプラインを調整し、プラットフォーム間のキャッシュとインクリメンタル・リビルドを可能にします。
 
-Learn more about the power of Turborepo:
+Roadmap
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+    Tauri 2テンプレートでapps/desktopをスキャフォールドし、Turboタスクを接続します。
+
+    Viteシェルと将来のデスクトップ・ビルドがプリミティブを共有できるようにpackages/uiを強化します。
+
+    Expo Routerを介してapps/mobileを導入し、データ・アクセスとモデルを共有します。
+
+    Turboリモート・キャッシングを使用して、クロスプラットフォーム・リリース・パイプライン（GitHub Actions）を自動化します。
+
+    RustコマンドとJSサーフェスの間のセキュリティおよびネイティブ機能の境界を文書化します。
+
+進捗状況はGitHub Issuesで追跡されています（スキャフォールディングが整い次第、プロジェクト・ボードが作成されます）。
+
+Contributing
+
+このリポジトリは現在、実験的なものです。エリアをプレフィックスとするフィーチャー・ブランチを作成してください（例: desktop/feature-name、mobile/prototype-map）。プルリクエストには以下を含める必要があります：
+
+    npm run lint と npm run check-types に合格すること
+
+    新しいTurboパイプラインまたはネイティブ依存関係をこのREADMEに文書化すること
+
+    プラットフォーム固有のテスト・メモを含めること
+
+Resources
+
+    Tauri 2 ドキュメント
+
+    React Native
+
+    Turborepo ドキュメント
+
+    Expo
+
+    One repo, shared primitives, native everywhere.
