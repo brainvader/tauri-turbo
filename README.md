@@ -1,124 +1,106 @@
-tauri-turbo
+# tauri-turbo
 
-主にTauri 2.0デスクトップアプリケーションのために構築された実験的なTurborepoです。共有ワークスペースは、将来のReact Nativeモバイルクライアントと軽量なReact + Viteウェブプレビューをサポートし、UIとドメインロジックがプラットフォーム間で整合性を保つようにします。
+Tauri 2.0デスクトップアプリケーション向けに構築された、実験的なTurborepoです。共有ワークスペースにより、将来のReact Nativeモバイルクライアントと軽量なReact + Viteウェブプレビューをサポートし、UIとドメインロジックがプラットフォーム間で一貫性を保つことを目指します。
 
-このリポジトリは、デザイン・トークン、ビジネス・ルール、開発者ツールにおけるシングル・ソース戦略を模索しつつ、デスクトップ・ビルドを最優先の成果物として維持します。
+このリポジトリは、デザイン・トークン、ビジネス・ルール、開発者ツールにおけるシングルソース戦略を模索しつつ、デスクトップビルドを最優先の成果物として維持します。
 
-Repository layout
+## リポジトリのレイアウト
 
-Path Role Status
-apps/web ブラウザでデスクトップのUXフローをプレビューするためのReact + Viteシェル Active
-apps/docs Viteベースのスタックに移行予定のドキュメント・プレイグラウンド Under migration
-packages/ui クロスプラットフォームのReactコンポーネントライブラリ（デスクトップ、ウェブ、モバイルのアダプターを含む） In progress
-packages/eslint-config マルチプラットフォーム・モノレポに合わせた集中型Linterルール Active
-packages/typescript-config 一貫したコンパイラ・フラグを強制するための共有TSコンフィグ Active
-(planned) apps/desktop 共有パッケージを利用するTauri 2.0シェル (Rust + WebView UI) Not yet scaffolded
-(planned) apps/mobile 共有ロジックとUIトークンを活用するReact Nativeアプリ Not yet scaffolded
+| Path                         | Role                                                                     | Status                |
+| :--------------------------- | :----------------------------------------------------------------------- | :-------------------- |
+| `apps/web`                   | ブラウザでデスクトップのUXフローをプレビューするためのReact + Viteシェル | ✅ Active             |
+| `apps/docs`                  | Viteベースのスタックに移行予定のドキュメント・プレイグラウンド           | 🏗️ Under migration    |
+| `packages/ui`                | クロスプラットフォームのReactコンポーネントライブラリ                    | 🚧 In progress        |
+| `packages/eslint-config`     | マルチプラットフォーム・モノレポに合わせた集中型Linterルール             | ✅ Active             |
+| `packages/typescript-config` | 一貫したコンパイラ・フラグを強制するための共有TSコンフィグ               | ✅ Active             |
+| `(planned) apps/desktop`     | 共有パッケージを利用するTauri 2.0シェル (Rust + WebView UI)              | 📝 Not yet scaffolded |
+| `(planned) apps/mobile`      | 共有ロジックとUIトークンを活用するReact Nativeアプリ                     | 📝 Not yet scaffolded |
 
-Prerequisites
+## 前提条件
 
-    Node.js 18+ と npm 10+（将来的な.nvmrcに準拠）
+- **Node.js**: `18+` と **npm**: `10+` （将来的な`.nvmrc`に準拠）
+- **Rustツールチェーン**: `cargo`と、OS固有のTauri 2の前提条件
+  - **Windows**: Visual Studio Build Tools (Desktopワークロード)、WebView2ランタイム、および `x86_64-pc-windows-msvc` ターゲット
+- **(Future) React Nativeツールチェーン**: モバイルワークスペースが追加された際には、Xcode、Android Studio、Expo CLIが必要
 
-    cargoを含むRustツールチェーンと、OS固有のTauri 2の前提条件
+## はじめに
 
-        Windowsの場合: Visual Studio Build Tools (Desktopワークロード)、WebView2ランタイム、および x86_64-pc-windows-msvc ターゲット
-
-    (Future) React Nativeツールチェーン: モバイルワークスペースが追加された際には、Xcode、Android Studio、Expo CLIが必要
-
-Getting started
-
-Bash
-
+```bash
 npm install
+```
 
 すべてのワークスペース・スクリプトはTurboを通じて調整されます：
 
-    npm run dev – すべてのアプリの開発サーバーを実行（<workspace>で絞り込むには turbo run dev --filter=<workspace> を使用）
+- `npm run dev`: すべてのアプリの開発サーバーを実行します。
+  - _(特定のワークスペースで実行するには `turbo run dev --filter=<workspace>` を使用)_
+- `npm run build`: モノレポ全体で本番ビルドを作成します。
+- `npm run lint`: 共有設定を使用してLinterを実行します。
+- `npm run check-types`: すべてのパッケージ/アプリの型チェックを実行します。
+- `npm run format`: Prettierを使用して `.ts`, `.tsx`, `.md` ファイルをフォーマットします。
 
-    npm run build – モノレポ全体で本番ビルドを作成
+## Web向けの作業
 
-    npm run lint – 共有設定を使用してLinterを実行
+### React + Vite ウェブシェル
 
-    npm run check-types – すべてのパッケージ/アプリの型チェックを実行
-
-    npm run format – Prettierを使用して.ts、.tsx、.mdファイルをフォーマット
-
-Working on web-facing surfaces
-
-Bash
-
-# React + Vite ウェブシェル
-
+```bash
 turbo run dev --filter=web
+```
 
-# ドキュメント・プレイグラウンド (VitePress/MDXへ移行中)
+### ドキュメント・プレイグラウンド (VitePress/MDXへ移行中)
 
+```bash
 turbo run dev --filter=docs
+```
 
-Tauri 2 desktop workflow (planned)
+## Tauri 2 デスクトップワークフロー (計画中)
 
-デスクトップ・シェルはapps/desktopに配置され、Tauri経由で公開されるRustコマンドとともにpackages/uiを利用します。
+デスクトップ・シェルは`apps/desktop`に配置され、Tauri経由で公開されるRustコマンドとともに`packages/ui`を利用します。
 
-    npm install – Rustビルドの前にバインディングが生成されることを保証
+- `npm install`: Rustビルドの前にバインディングが生成されることを保証します。
+- `turbo run dev --filter=desktop`: デスクトップ開発ウィンドウを起動します。
+- `turbo run build --filter=desktop`: 配布可能なバイナリを生成します。
 
-    turbo run dev --filter=desktop – デスクトップ開発ウィンドウを起動
+Tauri 2は、ReactフロントエンドをセキュアなWebViewにバンドルし、Rustコマンドがネイティブ統合を処理します。
 
-    turbo run build --filter=desktop – 配布可能なバイナリを生成
-
-    Tauri 2は、ReactフロントエンドをセキュアなWebViewにバンドルし、Rustコマンドがネイティブ統合を処理します。
-
-React Native workflow (planned)
+## React Native ワークフロー (計画中)
 
 モバイル・ワークスペースは、共有されたTypeScriptモデルとUIトークンを再利用します。
 
-    ネイティブ設定が変更されたときには npx expo prebuild を実行
+- `npx expo prebuild`: ネイティブ設定が変更されたときに実行します。
+- `turbo run dev --filter=mobile`: Expo開発サーバーを起動します。
+- `turbo run build --filter=mobile`: リリース・ビルドを作成します（EASまたはネイティブ・ツールチェーンを使用）。
 
-    turbo run dev --filter=mobile でExpo開発サーバーを起動
+Expoは、ビジネスロジックの重複なしに、React Nativeサーフェスを共有TypeScriptレイヤーと整合させます。
 
-    turbo run build --filter=mobile でリリース・ビルドを作成（EASまたはネイティブ・ツールチェーンを使用）
+## 共有コード戦略
 
-    Expoは、ビジネスロジックの重複なしに、React Nativeサーフェスを共有TypeScriptレイヤーと整合させます。
+- **UI kit (`packages/ui`)**: `@repo/ui/desktop`、`@repo/ui/web`、`@repo/ui/mobile` のようなアダプターを持つ、プラットフォームに依存しないコンポーネント。
+- **Configs**: 集中管理されたESLintとTypeScriptの設定が、Rust、Vite、React Nativeのターゲット全体で一貫したツール設定を強制します。
+- **Turbo tasks**: ビルド、Linter、テストのパイプラインを調整し、プラットフォーム間のキャッシュとインクリメンタル・リビルドを可能にします。
 
-Shared code strategy
+## ロードマップ
 
-    UI kit (packages/ui): @repo/ui/desktop、@repo/ui/web、@repo/ui/mobile のようなアダプターを持つ、プラットフォームに依存しないコンポーネント。
-
-    Configs: 集中管理されたESLintとTypeScriptの設定が、Rust、Vite、React Nativeのターゲット全体で一貫したツール設定を強制します。
-
-    Turbo tasks: ビルド、Linter、テストのパイプラインを調整し、プラットフォーム間のキャッシュとインクリメンタル・リビルドを可能にします。
-
-Roadmap
-
-    Tauri 2テンプレートでapps/desktopをスキャフォールドし、Turboタスクを接続します。
-
-    Viteシェルと将来のデスクトップ・ビルドがプリミティブを共有できるようにpackages/uiを強化します。
-
-    Expo Routerを介してapps/mobileを導入し、データ・アクセスとモデルを共有します。
-
-    Turboリモート・キャッシングを使用して、クロスプラットフォーム・リリース・パイプライン（GitHub Actions）を自動化します。
-
-    RustコマンドとJSサーフェスの間のセキュリティおよびネイティブ機能の境界を文書化します。
+- [ ] `apps/desktop` をTauri 2テンプレートでスキャフォールドし、Turboタスクを接続する。
+- [ ] `packages/ui` を強化し、Viteシェルと将来のデスクトップ・ビルドがプリミティブを共有できるようにする。
+- [ ] `apps/mobile` をExpo Routerを介して導入し、データ・アクセスとモデルを共有する。
+- [ ] Turboリモート・キャッシングを使用して、クロスプラットフォーム・リリース・パイプライン（GitHub Actions）を自動化する。
+- [ ] RustコマンドとJSサーフェスの間のセキュリティおよびネイティブ機能の境界を文書化する。
 
 進捗状況はGitHub Issuesで追跡されています（スキャフォールディングが整い次第、プロジェクト・ボードが作成されます）。
 
-Contributing
+## コントリビューション
 
-このリポジトリは現在、実験的なものです。エリアをプレフィックスとするフィーチャー・ブランチを作成してください（例: desktop/feature-name、mobile/prototype-map）。プルリクエストには以下を含める必要があります：
+このリポジトリは現在、実験的なものです。エリアをプレフィックスとするフィーチャー・ブランチを作成してください（例: `desktop/feature-name`、`mobile/prototype-map`）。プルリクエストには以下を含める必要があります：
 
-    npm run lint と npm run check-types に合格すること
+- `npm run lint` と `npm run check-types` に合格すること。
+- 新しいTurboパイプラインまたはネイティブ依存関係をこのREADMEに文書化すること。
+- プラットフォーム固有のテスト・メモを含めること。
 
-    新しいTurboパイプラインまたはネイティブ依存関係をこのREADMEに文書化すること
+## 参考資料
 
-    プラットフォーム固有のテスト・メモを含めること
+- [Tauri 2 ドキュメント](https://beta.tauri.app/start/intro/introduction/)
+- [React Native](https://reactnative.dev/)
+- [Turborepo ドキュメント](https://turbo.build/repo/docs)
+- [Expo](https://expo.dev/)
 
-Resources
-
-    Tauri 2 ドキュメント
-
-    React Native
-
-    Turborepo ドキュメント
-
-    Expo
-
-    One repo, shared primitives, native everywhere.
+> One repo, shared primitives, native everywhere.
